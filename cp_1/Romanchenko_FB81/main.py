@@ -28,10 +28,13 @@ def frequency(counter, n_gram_lenght):
 
 def form_up_info(frequency_entropy_ngram, crossing, whitespaces):
     crossing = "" if crossing else "no-"
-    whitespaces = "with" if crossing else "without"
+    whitespaces = "with" if whitespaces else "without"
     print(f"\nThe text divided as {frequency_entropy_ngram[2]}-grammed text with {crossing}crossing and {whitespaces} whitespaces ")
+    ts = ""
+    pair_first = ""
     for pair in frequency_entropy_ngram[0]:
-        print(f"{pair[0]}-{str('%.5f' % pair[1])}")
+        print(f"{ts}{pair[0]}-{str('%.5f' % pair[1])}")
+
     print("H =", str(frequency_entropy_ngram[1]))
     print("R =", str(1 - (frequency_entropy_ngram[1] / math.log(32, 2))) + "\n")
 
@@ -56,3 +59,13 @@ def text_info(l_text):
 file = open("text.txt", "r", encoding="UTF-8")
 text = file.read().lower()
 text_info(text)
+
+h1 = (2.59121733429369, 3.29947057079725)
+h2 = (1.69328914931809, 2.35930728772129)
+h3 = (1.98463818100934, 2.65621351403701)
+cool_pink_list = [(10, h1), (20, h2), (30, h3)]
+
+for experiment in cool_pink_list:
+    print("Порядок ен-граммы " + str(experiment[0]))
+    print(f"{experiment[1][0]} < H < {experiment[1][1]}")
+    print(f"{1 - (experiment[1][1] / math.log(32, 2))} < R < {1 - (experiment[1][0] / math.log(32, 2))}")
