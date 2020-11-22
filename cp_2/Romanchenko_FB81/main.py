@@ -81,48 +81,63 @@ def detect_possible_key_length(text, standart):
     return candidates
 
 
-def bruteforce(text, possible_variants, alphabet):
+def find_key(text, possible_variants, alphabet):
     letter_index, index_letter, alphabet_length = codable_things_of(alphabet)
     possible_keys = []
+    theoretical_common_letters = ["о", "е", "а", "и"]
     for possible_variant in possible_variants:
         key_length = possible_variant[0]
-        print(text)
-        print(key_length)
+
+        possible_key_list = []
+
+        for cases in range(len(theoretical_common_letters)):
+            possible_key_list.append("")
 
         for j in range(0, key_length):
             splited_text = ""
             for i in range(j, len(text), key_length):
                 splited_text += text[i]
-            print(j)
-            print(splited_text)
+
             most_common_letter = Counter(splited_text).most_common(1)[0][0]
-            print(most_common_letter)
+            for index in range(len(theoretical_common_letters)):
+                key_letter = index_letter[(letter_index[most_common_letter] - letter_index[theoretical_common_letters[index]] + len(alphabet)) % len(alphabet)]
+                possible_key_list[index] += key_letter
 
-
-
-    pass
+        possible_keys.append(possible_key_list)
+    print("Possible keys:")
+    for same_key_length_variants in possible_keys:
+        for key in same_key_length_variants:
+            print(key)
 
 
 russ_alphabet = list("абвгдежзийклмнопрстуфхцчшщъыьэюя")
 
-# file = open("mytext.txt", "r", encoding="UTF-8")
-# text = file.read().lower()
-#
-# print("\n" + str(text) + "\n")
-# encoded, keys = encode_with_keys(text, russ_alphabet)
-# for index in range(len(encoded)):
-#     i_c = conformity_index(encoded[index])
-#     print(f"Encoding text with {len(keys[index])} length key {keys[index]}" +
-#           f" (text conformity index {i_c}): \n{encoded[index]}\n")
+file = open("mytext.txt", "r", encoding="UTF-8")
+text = file.read().lower()
+
+print(f"\nPlain text (text conformity index {conformity_index(text)})")
+print(str(text) + "\n")
+encoded, keys = encode_with_keys(text, russ_alphabet)
+for index in range(len(encoded)):
+    i_c = conformity_index(encoded[index])
+    print(f"Encoding text with {len(keys[index])} length key {keys[index]}" +
+          f" (text conformity index {i_c}): \n{encoded[index]}\n")
 
 
 
 file = open("text.txt", "r", encoding="UTF-8")
 text = file.read().lower()
+print(f"\nEncoded text (text conformity index {conformity_index(text)})")
 print("\n" + text + "\n")
 
 possible_variants = detect_possible_key_length(text, 0.055)
-print("Candidates: \n" + str(possible_variants))
+print("Candidates: \n" + str(possible_variants) + "\n")
 
-bruteforce(text, possible_variants, russ_alphabet)
+find_key(text, possible_variants, russ_alphabet)
+
+print()
+key = "абсолютныйигрок"
+print(key)
+decoded = decode(list(text), list(key), russ_alphabet)
+print(decoded)
 
