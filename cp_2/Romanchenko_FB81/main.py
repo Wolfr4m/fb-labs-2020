@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 from collections import Counter
 import re
 
@@ -45,16 +46,36 @@ def conformity_index(text):
     letter_amount = len(text)
     letter_and_amount = Counter(text)
     letter_and_amount = list(sorted(letter_and_amount.items(), key=lambda t: t[0]))
-    print(letter_and_amount)
     i_c = 0
     for pair in letter_and_amount:
         i_c += (pair[1] * (pair[1] - 1)) / (letter_amount * (letter_amount - 1))
-
     return i_c
 
 
+def draw_plot(key_lengths, i_cs):
+    for index in range(len(key_lengths)):
+        plt.bar(key_lengths[index], i_cs[index], width=0.8, bottom=None, align="center", data=None)
+
+    plt.grid(which="major", color="r", linestyle="--", linewidth=0.1)
+    plt.xlabel("Key length")
+    plt.ylabel("Index of coincidence")
+    plt.show()
+
 def detect_possible_key_length(text):
-    pass
+    key_lengths = []
+    i_cs = []
+    for delta in range(2, 30):
+        i_c = 0
+        for j in range(0, delta):
+            splited_text = ""
+            for i in range(j, len(text), delta):
+                splited_text += text[i]
+            i_c += conformity_index(splited_text)
+        i_c /= delta
+        i_cs.append(i_c)
+        key_lengths.append(delta)
+    draw_plot(key_lengths, i_cs)
+    return key_lengths, i_cs
 
 
 russ_alphabet = list("абвгдежзийклмнопрстуфхцчшщъыьэюя")
@@ -69,7 +90,10 @@ russ_alphabet = list("абвгдежзийклмнопрстуфхцчшщъыь
 #     print(f"Encoding text with {len(keys[index])} length key {keys[index]}" +
 #           f" (text conformity index {i_c}): \n{encoded[index]}\n")
 
+
+
 file = open("text.txt", "r", encoding="UTF-8")
 text = file.read().lower()
-
-print(decode(list(text), list("абвгдежзийклмнопрстуфхцчшщъыьэюя"), russ_alphabet))
+print(text)
+print()
+kek = detect_possible_key_length(text)
