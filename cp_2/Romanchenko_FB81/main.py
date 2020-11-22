@@ -61,7 +61,8 @@ def draw_plot(key_lengths, i_cs):
     plt.ylabel("Index of coincidence")
     plt.show()
 
-def detect_possible_key_length(text):
+def detect_possible_key_length(text, standart):
+    candidates = []
     key_lengths = []
     i_cs = []
     for delta in range(2, 30):
@@ -72,10 +73,34 @@ def detect_possible_key_length(text):
                 splited_text += text[i]
             i_c += conformity_index(splited_text)
         i_c /= delta
+        if standart - 0.005 < i_c < standart + 0.005:
+            candidates.append((delta, i_c))
         i_cs.append(i_c)
         key_lengths.append(delta)
-    draw_plot(key_lengths, i_cs)
-    return key_lengths, i_cs
+    # draw_plot(key_lengths, i_cs)
+    return candidates
+
+
+def bruteforce(text, possible_variants, alphabet):
+    letter_index, index_letter, alphabet_length = codable_things_of(alphabet)
+    possible_keys = []
+    for possible_variant in possible_variants:
+        key_length = possible_variant[0]
+        print(text)
+        print(key_length)
+
+        for j in range(0, key_length):
+            splited_text = ""
+            for i in range(j, len(text), key_length):
+                splited_text += text[i]
+            print(j)
+            print(splited_text)
+            most_common_letter = Counter(splited_text).most_common(1)[0][0]
+            print(most_common_letter)
+
+
+
+    pass
 
 
 russ_alphabet = list("абвгдежзийклмнопрстуфхцчшщъыьэюя")
@@ -94,6 +119,10 @@ russ_alphabet = list("абвгдежзийклмнопрстуфхцчшщъыь
 
 file = open("text.txt", "r", encoding="UTF-8")
 text = file.read().lower()
-print(text)
-print()
-kek = detect_possible_key_length(text)
+print("\n" + text + "\n")
+
+possible_variants = detect_possible_key_length(text, 0.055)
+print("Candidates: \n" + str(possible_variants))
+
+bruteforce(text, possible_variants, russ_alphabet)
+
