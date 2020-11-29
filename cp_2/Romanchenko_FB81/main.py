@@ -1,44 +1,37 @@
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plot
 from collections import Counter
-import re
-
-
-def filter_text(l_text):
-    l_text = re.sub("[^А-аЯ-я ]", "", l_text)
-    l_text_with_spaces = l_text
-    l_text_without_spaces = l_text.replace(" ", "")
-    return l_text_with_spaces, l_text_without_spaces
 
 
 def codable_things_of(alphabet):
+    # returns two dictionaries that converts char->int, int->char and amount of letters in alphabet
     alphabet_length = len(alphabet)
-    letter_index = {alphabet[key]: key for key in range(alphabet_length)}
-    index_letter = {key: alphabet[key] for key in range(alphabet_length)}
+    letter_index = {alphabet[key_id]: key_id for key_id in range(alphabet_length)}
+    index_letter = {key_id: alphabet[key_id] for key_id in range(alphabet_length)}
     return letter_index, index_letter, alphabet_length
 
 
 def encode_with_keys(l_text, alphabet):
-    keys = ["ад", "рай", "ключ", "жесть", "оченьбольшоеслово"]
+    encoding_keys = ["ад", "рай", "ключ", "жесть", "оченьбольшоеслово"]
     encoded_texts = []
-    for key in keys:
-        encoded = encode(list(l_text), list(key), alphabet)
-        encoded_texts.append(encoded)
-    return encoded_texts, keys
+    for encoding_key in encoding_keys:
+        encoded_text = encode(list(l_text), list(encoding_key), alphabet)
+        encoded_texts.append(encoded_text)
+    return encoded_texts, encoding_keys
 
 
 def encode(l_text, l_key, alphabet):
     letter_index, index_letter, alphabet_length = codable_things_of(alphabet)
     key_len = len(l_key)
-    for index in range(len(l_text)):
-        l_text[index] = index_letter[(letter_index[l_text[index]] + letter_index[l_key[index % key_len]]) % alphabet_length]
+    for i in range(len(l_text)):
+        l_text[i] = index_letter[(letter_index[l_text[i]] + letter_index[l_key[i % key_len]]) % alphabet_length]
     return "".join(l_text)
 
 
 def decode(l_text, l_key, alphabet):
     letter_index, index_letter, alphabet_length = codable_things_of(alphabet)
     key_len = len(l_key)
-    for index in range(len(l_text)):
-        l_text[index] = index_letter[(letter_index[l_text[index]] - letter_index[l_key[index % key_len]]) % alphabet_length]
+    for i in range(len(l_text)):
+        l_text[i] = index_letter[(letter_index[l_text[i]] - letter_index[l_key[i % key_len]]) % alphabet_length]
     return "".join(l_text)
 
 
@@ -48,18 +41,22 @@ def conformity_index(text):
     letter_and_amount = list(sorted(letter_and_amount.items(), key=lambda t: t[0]))
     i_c = 0
     for pair in letter_and_amount:
+        #            certain_letter_amount * (certain_letter_amount - 1)
+        # i_c =  ∑   --------------------------------------------------
+        #              total_letter_amount * (total_letter_amount - 1)
         i_c += (pair[1] * (pair[1] - 1)) / (letter_amount * (letter_amount - 1))
     return i_c
 
 
 def draw_plot(key_lengths, i_cs):
-    for index in range(len(key_lengths)):
-        plt.bar(key_lengths[index], i_cs[index], width=0.8, bottom=None, align="center", data=None)
+    for key_length in range(len(key_lengths)):
+        plot.bar(key_lengths[key_length], i_cs[key_length], width=0.8, bottom=None, align="center", data=None)
 
-    plt.grid(which="major", color="r", linestyle="--", linewidth=0.1)
-    plt.xlabel("Key length")
-    plt.ylabel("Index of coincidence")
-    plt.show()
+    plot.grid(which="major", color="r", linestyle="--", linewidth=0.1)
+    plot.xlabel("Key length")
+    plot.ylabel("Index of coincidence")
+    plot.show()
+
 
 def detect_possible_key_length(text, standart):
     candidates = []
@@ -77,6 +74,7 @@ def detect_possible_key_length(text, standart):
             candidates.append((delta, i_c))
         i_cs.append(i_c)
         key_lengths.append(delta)
+        print(f"Key {delta}, index of coincidence {i_c}")
     # draw_plot(key_lengths, i_cs)
     return candidates
 
@@ -99,9 +97,9 @@ def find_key(text, possible_variants, alphabet):
                 splited_text += text[i]
 
             most_common_letter = Counter(splited_text).most_common(1)[0][0]
-            for index in range(len(theoretical_common_letters)):
-                key_letter = index_letter[(letter_index[most_common_letter] - letter_index[theoretical_common_letters[index]] + len(alphabet)) % len(alphabet)]
-                possible_key_list[index] += key_letter
+            for i in range(len(theoretical_common_letters)):
+                key_letter = index_letter[(letter_index[most_common_letter] - letter_index[theoretical_common_letters[i]] + len(alphabet)) % len(alphabet)]
+                possible_key_list[i] += key_letter
 
         possible_keys.append(possible_key_list)
     print("Possible keys:")
@@ -124,14 +122,13 @@ for index in range(len(encoded)):
           f" (text conformity index {i_c}): \n{encoded[index]}\n")
 
 
-
 file = open("text.txt", "r", encoding="UTF-8")
 text = file.read().lower()
 print(f"\nEncoded text (text conformity index {conformity_index(text)})")
 print("\n" + text + "\n")
 
 possible_variants = detect_possible_key_length(text, 0.055)
-print("Candidates: \n" + str(possible_variants) + "\n")
+print("\nCandidates: \n" + str(possible_variants) + "\n")
 
 find_key(text, possible_variants, russ_alphabet)
 
