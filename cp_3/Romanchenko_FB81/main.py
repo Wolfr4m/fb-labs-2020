@@ -22,6 +22,21 @@ def inverse(a, mod):
             return number
 
 
+def solve_equation(x_c, a, mod):    # x_c * x = a mod(mod)
+    a = (mod + a) % mod
+    x_c = (mod + x_c) % mod
+
+    divider = gcd(a, mod)
+
+    answers = []
+    if (x_c % divider) == 0:
+        x_c_inverse = inverse(a // divider, mod // divider)
+        for answer_number in range(divider):
+            # print(f"x = {x_c_inverse}*{x_c // divider} + {answer_number}*{mod // divider} mod {mod}")
+            x = (x_c_inverse * (x_c // divider) + answer_number * (mod // divider)) % mod
+            answers.append(x)
+
+    return answers
 
 
 def bigram_to_int(bigram, letter_index, alphabet_length):
@@ -53,7 +68,7 @@ def frequency(elements):
 
 def find_keys(popular_text_bigrams, popular_lang_bigrams, alphabet):
     print(f"From lang: {popular_lang_bigrams}")
-    print(f"From text: {popular_text_bigrams}")
+    print(f"From text: {popular_text_bigrams}" + "\n")
     alphabet_length = len(alphabet)
     letter_index, _ = codable_things_of(alphabet)
     popular_text_bigrams = list(map(lambda x: bigram_to_int(x, letter_index, alphabet_length), popular_text_bigrams))
@@ -65,6 +80,7 @@ def find_keys(popular_text_bigrams, popular_lang_bigrams, alphabet):
 
             for pop_text_big_ind1 in range(len(popular_text_bigrams)):
                 for pop_text_big_ind2 in range(len(popular_text_bigrams)):
+
                     if pop_text_big_ind1 == pop_text_big_ind2:
                         continue
                     else:
@@ -72,28 +88,39 @@ def find_keys(popular_text_bigrams, popular_lang_bigrams, alphabet):
                         X1, X2 = popular_lang_bigrams[pop_lan_big_ind1], popular_lang_bigrams[pop_lan_big_ind2]
                         print(f"{Y1} = a*{X1} + b mod {mod}")
                         print(f"{Y2} = a*{X2} + b mod {mod}")
+                        a_s = solve_equation(Y1-Y2, X1-X2, mod)
+                        b_s = list(map(lambda x: (((Y1 - x * X1) % mod) + mod) % mod, a_s))
+                        keys = list(map(lambda k: (a_s[k], b_s[k]), range(len(a_s))))
+                        for key in keys:
+                            possible_keys.append(key)
                         print()
-                        possible_keys.append([(pop_lan_big_ind1, pop_lan_big_ind2), (pop_text_big_ind1, pop_text_big_ind2)])
-    print(len(possible_keys))
-    return possible_keys
-
-
-def brute(encoded_text, possible_keys):
-    print(encoded_text)
     print(possible_keys)
+    return list(set(possible_keys))
+
+
+def brute(encoded_bigramed_text, possible_keys, alphabet):
+    alphabet_length = len(alphabet)
+    letter_index, index_letter = codable_things_of(alphabet)
     decoded_text = "kitty"
+    mod = alphabet_length ** 2
+    for key in possible_keys:
+        a_inverce = inverse(key[0], mod)
+        encoded_bigramed_text_values = list(map(lambda x: bigram_to_int(x, letter_index, alphabet_length), encoded_bigramed_text))
+        decoded_bigramed_text_values = list(map(lambda x: a_inverce * (x-key[1] + 1000 * mod) % mod, encoded_bigramed_text_values))
+        print(decoded_bigramed_text_values)
     return decoded_text
 
 def hacking(encoded_text, alphabet):
     print(f"{alphabet}\n")
     # 2 means divide by non-crossed bigrams
-    bigrammed_text = Counter([encoded_text[i:i + 2] for i in range(0, len(encoded_text), 2)])
+    bigrammed_text = [encoded_text[i:i + 2] for i in range(0, len(encoded_text), 2)]
+    bigrammed_text_counter = Counter([encoded_text[i:i + 2] for i in range(0, len(encoded_text), 2)])
     top_five_lang_bigrams = ["ст", "но", "то", "на", "ен"]
-    top_five_text_bigrams, _ = map(list, zip(*frequency(bigrammed_text)[:5]))
+    top_five_text_bigrams, _ = map(list, zip(*frequency(bigrammed_text_counter)[:5]))
 
     possible_keys = find_keys(top_five_text_bigrams, top_five_lang_bigrams, alphabet)
 
-    decoded_text = brute(encoded_text, possible_keys)
+    decoded_text = brute(bigrammed_text, possible_keys, alphabet)
     return decoded_text
 
 
