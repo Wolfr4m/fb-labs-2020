@@ -84,10 +84,10 @@ def find_keys(popular_text_bigrams, popular_lang_bigrams, alphabet):
                         keys = list(map(lambda k: (a_s[k], b_s[k]), range(len(a_s))))
                         for key in keys:
                             possible_keys.append(key)
-                        # print(f"{Y1} = a*{X1} + b mod {mod}")
-                        # print(f"{Y2} = a*{X2} + b mod {mod}")
-                        # print()
-    print(f"{possible_keys}" + "\n")
+                        print(f"{Y1} = a*{X1} + b mod {mod}")
+                        print(f"{Y2} = a*{X2} + b mod {mod}")
+                        print()
+    print(f"Keys: {possible_keys}\nAmount: {len(possible_keys)}\n")
     return list(set(possible_keys))
 
 
@@ -114,8 +114,8 @@ def hacking(encoded_text, alphabet):
     print(f"{alphabet}\n")
     # 2 means divide by non-crossed bigrams
     bigrammed_text = [encoded_text[i:i + 2] for i in range(0, len(encoded_text), 2)]
-    top_five_lang_bigrams = ["ст", "но", "то", "на", "ен"]
-    top_five_text_bigrams = list(map(lambda x: x[0], Counter(bigrammed_text).most_common(5)))
+    top_five_lang_bigrams = ["ст", "но", "то", "на", "ен"][:3]
+    top_five_text_bigrams = list(map(lambda x: x[0], Counter(bigrammed_text).most_common(5)))[:3]
 
     possible_keys = find_keys(top_five_text_bigrams, top_five_lang_bigrams, alphabet)
 
@@ -132,3 +132,4 @@ decoded_variants = hacking(text, rus_alphabet)
 for triplet in decoded_variants:
     print(f"Key: {triplet[0]}\nConformity index: {triplet[1]}\nDecoded: {triplet[2]}")
 
+print(solve_equation(11, 22, 33))
