@@ -2,14 +2,14 @@ from rsa_math import *
 
 
 def generate_key_pair(key_length):
-    first_prime = random_bit_prime(key_length)
-    second_prime = random_bit_prime(key_length)
+    first_prime = random_prime_bit(key_length)
+    second_prime = random_prime_bit(key_length)
+
     modulus = first_prime * second_prime
     euler = (second_prime - 1) * (first_prime - 1)
-
     public_exponent = random_int(2, (euler - 1))
 
-    while gcd(public_exponent, euler) > 1:
+    while not gcd(public_exponent, euler) == 1:
         public_exponent += 1
         if public_exponent + 1 == euler:
             public_exponent = random_int(2, (euler - 1))
@@ -46,9 +46,14 @@ def verify(message, signature, public_key):
     return passed_verification
 
 
-def send_key():
-    pass
+def send_key(message, user_a_private, user_b_public):
+    encrypted_message = encrypt(message, user_b_public)
+    message_signature = sign(message, user_a_private)
+    encrypted_message_signature = encrypt(message_signature, user_b_public)
+    return encrypted_message, encrypted_message_signature
 
 
-def recive_key():
-    pass
+def receive_key(encrypted_message, encrypted_message_signature, user_a_public_key, user_b_private_key):
+    message = decrypt(encrypted_message, user_b_private_key)
+    signature = decrypt(encrypted_message_signature, user_b_private_key)
+    return verify(message, signature, user_a_public_key)

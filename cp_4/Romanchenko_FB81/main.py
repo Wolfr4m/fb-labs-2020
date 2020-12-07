@@ -1,14 +1,17 @@
 from person import *
 from rsa import *
+import requests
 
-alice = Person(512)
+def pretty_hexed(num):
+    return "0" + hex(num)[2:]
 
-ecnrypted = encrypt(111, alice.public_key)
-print(ecnrypted)
-decrypted = decrypt(ecnrypted, alice.private_key)
-print(decrypted)
+alice = Person(256)
+message = 123456789
 
-signed = sign(111, alice.private_key)
-print(signed)
-passed_verification = verify(111, signed, alice.public_key)
-print(passed_verification)
+rec = requests.get(f"http://asymcryptwebservice.appspot.com/rsa/encrypt"
+                   f"?modulus={pretty_hexed(alice.public_key[1])}"
+                   f"&publicExponent={pretty_hexed(alice.public_key[0])}"
+                   f"&message={pretty_hexed(message)}")
+
+print(f"Check if messages encrypts same with api and local "
+      f"{int(rec.json()['cipherText'], 16) == encrypt(message, alice.public_key)}")
