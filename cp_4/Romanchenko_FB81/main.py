@@ -37,11 +37,12 @@ rec = requests.get(f"http://asymcryptwebservice.appspot.com/rsa/verify"
 print(f"Local verification: {verify(alice_message, signature, alice.public_key)}\n"
       f"Api verification {rec.json()['verified']}\n")
 
-rec = requests.get(f"http://asymcryptwebservice.appspot.com/rsa/serverKey?keySize=1024")
+rec = requests.get(f"http://asymcryptwebservice.appspot.com/rsa/serverKey?keySize=520")
 
 bob_public_key = (int(rec.json()["publicExponent"], 16), int(rec.json()["modulus"], 16))
 
 encrypted_message, encrypted_message_signature = send_key(alice_message, alice.private_key, bob_public_key)
+
 
 rec = requests.get(f"http://asymcryptwebservice.appspot.com/rsa/receiveKey"
                    f"?key={pretty_hexed(encrypted_message)}"

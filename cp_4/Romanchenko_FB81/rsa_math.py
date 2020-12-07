@@ -25,10 +25,10 @@ def random_prime(min_number, max_number):
 def random_prime_bit(bit_lenght):
     # 1000....0000
     # min_number has "1" at the start and (bit_lenght - 1) "0"
-    min_number = 2 ** (bit_lenght - 1)
+    min_number = 2 ** (bit_lenght // 2 - 1)
     # 1111....1111
     # max_number has (bit_length) "1"
-    max_number = 2 ** (bit_lenght + 1) - 1
+    max_number = 2 ** (bit_lenght // 2 + 1) - 1
     return random_prime(min_number, max_number)
 
 
