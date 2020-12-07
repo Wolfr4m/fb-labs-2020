@@ -10,7 +10,7 @@ def random_prime(min_number, max_number):
     random_number = random_int(min_number, max_number)
     # if number is even -> +1
     # if number is odd -> do nothing
-    if not is_odd(random_number):
+    if not odd(random_number):
         random_number += 1
 
     while True:
@@ -79,7 +79,7 @@ def is_prime(n):
     return True
 
 
-def is_odd(number):
+def odd(number):
     return number % 2 == 1
 
 
