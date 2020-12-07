@@ -22,20 +22,28 @@ def generate_key_pair(key_length):
     return public_key, private_key
 
 
-def encrypt():
-    pass
+def encrypt(message, public_key):
+    public_exponent, modulus = public_key
+    encrypted_message = pow(message, public_exponent, modulus)
+    return encrypted_message
 
 
-def decrypt():
-    pass
+def decrypt(message, private_key):
+    secret, modulus = private_key
+    decrypted_message = pow(message, secret, modulus)
+    return decrypted_message
 
 
-def sign():
-    pass
+def sign(message, private_key):
+    secret, modulus = private_key
+    signature = pow(message, secret, modulus)
+    return signature
 
 
-def verify():
-    pass
+def verify(message, signature, public_key):
+    public_exponent, modulus = public_key
+    passed_verification = (message == pow(signature, public_exponent, modulus))
+    return passed_verification
 
 
 def send_key():
