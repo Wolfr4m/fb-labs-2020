@@ -7,6 +7,14 @@ class Person:
         public_key, private_key = generate_key_pair(key_lentgh)
         self.public_key = public_key
         self.private_key = private_key
+        print()
+        print(f"Alice public key:"
+              f"\n\tpublic exponent: {public_key[0]}"
+              f"\n\tmodulus: {public_key[1]}")
+        print(f"Alice private key:"
+              f"\n\tsecret: {public_key[0]}"
+              f"\n\tmodulus: {public_key[1]}")
+        print()
 
 
 def pretty_hexed(num):

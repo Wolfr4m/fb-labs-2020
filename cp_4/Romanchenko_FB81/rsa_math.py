@@ -67,15 +67,17 @@ def is_prime(n):
         for _ in range(r - 1):
             x = pow(x, 2, n)
             if x == 1:
+                print(f"Miller Rabin failure(composite): {n}")
                 # n is composite.
                 return False
             if x == n - 1:
                 # Exit inner loop and continue with next witness.
                 break
         else:
+            print(f"Miller Rabin failure(composite): {n}")
             # If loop doesn't break, n is composite.
             return False
-
+    print(f"Miller Rabin approve ( prime ) : {n}")
     return True
 
 
