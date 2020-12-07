@@ -40,7 +40,7 @@ def gcd(first_num, second_num):
 
 # Miller-Rabin primality test
 def is_prime(n):
-    k = 1000
+    k = 1024
     # prevent potential infinite loop when d = 0
     if n < 2:
         return False
@@ -80,3 +80,27 @@ def is_prime(n):
 
 def is_odd(number):
     return number % 2 == 1
+
+
+def opposite(a, mod):
+    coefficients = []
+    fnumber = a
+    snumber = mod
+    while snumber != 0:
+        temp = snumber
+        if fnumber > snumber:
+            coefficients.append(fnumber // snumber)
+        snumber = fnumber % snumber
+        fnumber = temp
+
+
+    x1 = 1
+    x0 = 0
+    temp = 0
+    for index in range(len(coefficients) - 1):
+        temp = x1
+        x1 = x1 * -(coefficients[index]) + x0
+        x0 = temp
+    if x1 < 0:
+        x1 = x1 + mod
+    return x1
